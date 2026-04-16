@@ -56,7 +56,13 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_amount",
+						"type": "uint256"
+					}
+				],
 				"name": "claim",
 				"outputs": [],
 				"stateMutability": "nonpayable",
@@ -118,21 +124,21 @@
 		"devdoc": {
 			"details": "Implements block.timestamp for time tracking and linear release.",
 			"kind": "dev",
-			"methods": {},
+			"methods": {
+				"claim(uint256)": {
+					"params": {
+						"_amount": "The amount in wei to claim. Use 0 to claim all available."
+					}
+				}
+			},
 			"title": "TokenVesting",
 			"version": 1
 		},
 		"userdoc": {
 			"kind": "user",
 			"methods": {
-				"claim()": {
-					"notice": "Employee withdraws currently vested portion."
-				},
-				"claimableAmount()": {
-					"notice": "Calculates claimable funds. 0 if before 6-month cliff."
-				},
-				"constructor": {
-					"notice": "Initializes the contract with a beneficiary and total fund amount."
+				"claim(uint256)": {
+					"notice": "Claim a specific amount, or pass 0 to claim everything available."
 				}
 			},
 			"notice": "Task 3: Token Vesting with 6-Month Cliff",
@@ -156,11 +162,11 @@
 	},
 	"sources": {
 		"TokenVesting.sol": {
-			"keccak256": "0x46ad9ccb5b844fba941f15fddfa054875fff21827396d14ed524116cc5b3caba",
+			"keccak256": "0xef60f34d1d799af85457f4a5f9787080a1c07125ff885ba0343e91979e5fa01a",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://312808ad15d863375bf7a26c8d6d561a5dbd4a52ddbf8c9c48fe965ac3886ec9",
-				"dweb:/ipfs/QmNRrwscj4R3gZUzUVH7T3bjHxUfHDhwVrFJGr9js7ffEj"
+				"bzz-raw://2131caf22630935efc6e5ce68d764f523429b8126934ad0b7e91dffccb8cd5c9",
+				"dweb:/ipfs/QmTvAvAkrGsYxbzmB3beYPCaBvJsKaEaFELFwTXUuxqcqz"
 			]
 		}
 	},

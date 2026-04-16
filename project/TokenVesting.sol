@@ -7,18 +7,15 @@ pragma solidity ^0.8.0;
  * @dev Implements block.timestamp for time tracking and linear release.
  */
 contract TokenVesting {
-    address public beneficiary; //
+    address public beneficiary;
     uint256 public startTime;
     uint256 public totalAmount;
     uint256 public releasedAmount;
 
     // TEMPORARY FOR PROOF: Cliff is now 0, Vesting is 100 seconds
-    uint256 public constant CLIFF_DURATION = 180  days; // 6 months
-    uint256 public constant VESTING_DURATION = 720 days; // 24 months (2 years);
+    uint256 public constant CLIFF_DURATION = 180 days; // 6 months
+    uint256 public constant VESTING_DURATION = 720 days; // 24 months (2 years)
 
-    /**
-     * @notice Initializes the contract with a beneficiary and total fund amount.
-     */
     constructor(address _beneficiary) payable {
         require(msg.value > 0, "Must fund the contract");
         beneficiary = _beneficiary;
@@ -26,16 +23,11 @@ contract TokenVesting {
         totalAmount = msg.value;
     }
 
-    /**
-     * @notice Calculates claimable funds. 0 if before 6-month cliff.
-     */
     function claimableAmount() public view returns (uint256) {
-        // If current_time < start_time + 6 months, claimableAmount must be 0
         if (block.timestamp < startTime + CLIFF_DURATION) {
             return 0;
         }
 
-        // Linear release for 24 months [cite: 59]
         if (block.timestamp >= startTime + VESTING_DURATION) {
             return totalAmount - releasedAmount;
         } else {
@@ -46,16 +38,22 @@ contract TokenVesting {
     }
 
     /**
-     * @notice Employee withdraws currently vested portion.
+     * @notice Claim a specific amount, or pass 0 to claim everything available.
+     * @param _amount The amount in wei to claim. Use 0 to claim all available.
      */
-    function claim() public {
+    function claim(uint256 _amount) public {
         require(msg.sender == beneficiary, "Only beneficiary can claim");
-        
-        uint256 amount = claimableAmount();
-        require(amount > 0, "No funds available for claim yet");
 
-        releasedAmount += amount;
-        (bool success, ) = beneficiary.call{value: amount}("");
+        uint256 available = claimableAmount();
+        require(available > 0, "No funds available for claim yet");
+
+        // If 0 is passed, claim the full available amount
+        uint256 amountToClaim = (_amount == 0) ? available : _amount;
+
+        require(amountToClaim <= available, "Amount exceeds claimable balance");
+
+        releasedAmount += amountToClaim;
+        (bool success, ) = beneficiary.call{value: amountToClaim}("");
         require(success, "Transfer failed");
     }
 }
